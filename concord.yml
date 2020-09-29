@@ -1,3 +1,15 @@
 flows:
   default:
-  - log: "Hello Concord User"
+  - form: simpleForm
+  - log: "Hello, Mr. ${simpleForm.firstname} ${simpleForm.lastname}"
+  - log: "Your Username is ${simpleForm.username} and your password is ${simpleForm.password}"
+  - log: "Your EmailID is ${simpleForm.emailID}"
+
+
+forms:
+  simpleForm:
+    - username: {label: "Username", type: "string", placeholder: "Give your Username here"}
+    - password: {label: "Password", type: "string", placeholder: "Give your Password here"}
+    - firstname: {label: "First Name", type: "string", placeholder: "Give your First Name here"}
+    - lastname: {label: "Last Name", type: "string", placeholder: "Give your Last Name here"}
+    - emailID: {label: "EmailID", type: "string", placeholder: "Give your EmailID here"}
