@@ -1,36 +1,52 @@
 configuration:
   arguments:
-    simpleForm:
-      lastname: TestLastName
+    myForm:
+      lastName: Smith
   dependencies:
-    - "mvn://org.python:jpython-standalone:2.7.0"
-
+  - "mvn://org.python:jython-standalone:2.7.0"
 
 flows:
   default:
-  - form: simpleForm
-  - log: "Hello, Mr. ${simpleForm.firstname} ${simpleForm.lastname}"
-  - log: "Your Username is ${simpleForm.username} and your password is ${simpleForm.password}"
-  - log: "Your EmailID is ${simpleForm.emailID}"
+  - form: myForm
+    # form calls can override form values or provide additional data
+    values:
+      lastName: "Appleseed"
+      sum: "${1 + 2}"
+      address:
+        city: Toronto
+        province: Ontario
+        country: Canada
+
+  - log: "Hello, ${myForm.firstName} ${myForm.lastName}"
+  - log: "We got your file and stored it as ${myForm.aFile}"
+  - log: "You have following skills"
+  - task: log
+    in:
+      msg: "Skill -> ${item}"
+    withItems: ${myForm.skills}
+  - if: ${myForm.tosAgree}
+    then:
+      - log: "${myForm.firstName} says: I have agreed to the Terms and Conditions"
   - set:
-    x: ${simpleForm.lastname}
-    a: ${simpleForm.username}
-    b: ${simpleForm.password}
-    c: ${simpleForm.firstname}
-    d: ${simpleForm.emailID}
-    e: ${simpleForm.age}
+      x: ${myForm.age}
+      a: ${myForm.firstName}
+      b: ${myForm.lastName}
+      c: ${myForm.color}
+      d: ${myForm.tosAgree}
+      e: ${myForm.skills}
   - call: mysubflow
-
+    
+  
   mysubflow:
-    - script: example.py
-    - log: "The Result is ${y}"
-
+  - script: example.py
+  - log: "The result: ${y}"
 
 forms:
-  simpleForm:
-    - username: {label: "Username", type: "string", placeholder: "Give your Username here"}
-    - password: {label: "Password", type: "string", placeholder: "Give your Password here"}
-    - firstname: {label: "First Name", type: "string", placeholder: "Give your First Name here"}
-    - lastname: {label: "Last Name", type: "string", placeholder: "Give your Last Name here"}
-    - emailID: {label: "EmailID", type: "string", placeholder: "Give your EmailID here"}
-    - age: {label: "Age", type: "int", placeholder: "Give your Age"}
+  myForm:
+  - firstName: { label: "First name", type: "string", value: "John" }
+  - lastName: { label: "Last name", type: "string" }
+  - age: { label: "Age", type: "int", min: 21, max: 999 }
+  - color: { label: "Favorite color", type: "string", allow: ["red", "green", "blue"] }
+  - aFile: { label: "A file", type: "file?" }
+  - tosAgree: { label: "Terms and conditions read", type: "boolean", value: true }
+  - skills: { label: "Skills", type: "string*", allow: ["css", "design", "angular"]}
