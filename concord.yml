@@ -1,9 +1,29 @@
+configuration:
+  arguments:
+    simpleForm:
+      lastanme: TestLastName
+  dependencies:
+    - "mvn://org.python:jpython-standalone:2.7.0"
+
+
 flows:
   default:
   - form: simpleForm
   - log: "Hello, Mr. ${simpleForm.firstname} ${simpleForm.lastname}"
   - log: "Your Username is ${simpleForm.username} and your password is ${simpleForm.password}"
   - log: "Your EmailID is ${simpleForm.emailID}"
+  - set:
+    x: ${simpleForm.lastname}
+    a: ${simpleForm.username}
+    b: ${simpleForm.password}
+    c: ${simpleForm.firstname}
+    d: ${simpleForm.emailID}
+    e: ${simpleForm.age}
+  - call: mysubflow
+
+  mysubflow:
+    - script: example.py
+    - log: "The Result is $(y)"
 
 
 forms:
@@ -13,3 +33,4 @@ forms:
     - firstname: {label: "First Name", type: "string", placeholder: "Give your First Name here"}
     - lastname: {label: "Last Name", type: "string", placeholder: "Give your Last Name here"}
     - emailID: {label: "EmailID", type: "string", placeholder: "Give your EmailID here"}
+    - age: {label: "Age", type: "int", placeholder: "Give your Age"}
